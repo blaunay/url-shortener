@@ -5,6 +5,9 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/**
+ * Validator for the configuration properties.
+ */
 public class UrlShortenerValidator implements Validator {
     @Override
     public boolean supports(Class<?> clazz) {
@@ -20,6 +23,12 @@ public class UrlShortenerValidator implements Validator {
         }
     }
 
+    /**
+     * Validates that the given string has a correct URL format.
+     *
+     * @param url the url to validate
+     * @return true if url is valid, false otherwise.
+     */
     public boolean isInvalidUrl(String url) {
         try {
             UriComponentsBuilder.fromHttpUrl(url);

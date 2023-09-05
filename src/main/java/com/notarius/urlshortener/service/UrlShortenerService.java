@@ -22,16 +22,36 @@ public class UrlShortenerService {
         this.urlShortenerProperties = urlShortenerProperties;
     }
 
+    /**
+     * Shortens a complete URL
+     *
+     * @param completeUrl the URL to shorten
+     * @return the shortened URL
+     */
     public String getShortenedUrl(@NonNull String completeUrl) {
         String urlId = computeShortenedUrlId(completeUrl);
         UrlEntry urlEntry = urlEntryRepository.findById(urlId).orElseGet(() -> saveNewUrlEntry(urlId, completeUrl));
         return buildShortenedUrl(urlEntry);
     }
 
+    /**
+     * Retrieves the complete URL, from a given shortened URL id
+     *
+     * @param urlId the shortened URL id, without the domain name
+     * @return an Optional containing the complete URL, if it exists
+     */
     public Optional<String> getCompleteUrl(@NonNull String urlId) {
         return urlEntryRepository.findById(urlId).map(UrlEntry::getCompleteUrl);
     }
 
+    /**
+     * Using the complete URL, returns the id that will be used in the shortened URL.
+     * The complete URL is hashed using MD5, then encoded using the <a href="https://datatracker.ietf.org/doc/html/rfc4648">Base64 URL-safe standard</a>
+     * The first 10 digits are used as the id
+     *
+     * @param completeUrl The complete URL to shorten
+     * @return The id to be used in the shortened URL.
+     */
     private String computeShortenedUrlId(@NonNull String completeUrl) {
         byte[] md5HashedUrl = DigestUtils.md5Digest(completeUrl.trim().getBytes());
         String encodedUrl = new String(Base64.getUrlEncoder().encode(md5HashedUrl));

@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * Persisted entity matching a complete URL with the id used in the shortened URL.
+ */
 @Entity
 @Getter
 @NoArgsConstructor
