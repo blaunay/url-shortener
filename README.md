@@ -1,5 +1,10 @@
 # url-shortener
 
+### Requis techniques
+
+* [Java 20 JDK](https://jdk.java.net/20/)
+* [Maven](https://maven.apache.org/download.cgi)
+
 Micro-service Spring Boot permettant de raccourcir une URL. L'application peut être démarrée avec la commande suivante:
 
 ```sh
