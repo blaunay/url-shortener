@@ -2,7 +2,7 @@ package com.notarius.urlshortener.controller;
 
 import com.notarius.urlshortener.config.UrlShortenerValidator;
 import com.notarius.urlshortener.model.UrlData;
-import com.notarius.urlshortener.service.ShortenerService;
+import com.notarius.urlshortener.service.UrlShortenerService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -13,13 +13,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/url")
-public class ShortenerController {
+public class UrlShortenerController {
 
-    private final ShortenerService shortenerService;
+    private final UrlShortenerService urlShortenerService;
     private final UrlShortenerValidator urlShortenerValidator;
 
-    public ShortenerController(ShortenerService shortenerService, UrlShortenerValidator urlShortenerValidator) {
-        this.shortenerService = shortenerService;
+    public UrlShortenerController(UrlShortenerService urlShortenerService, UrlShortenerValidator urlShortenerValidator) {
+        this.urlShortenerService = urlShortenerService;
         this.urlShortenerValidator = urlShortenerValidator;
     }
 
@@ -30,12 +30,12 @@ public class ShortenerController {
         if (urlShortenerValidator.isInvalidUrl(completeUrl)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The completeUrl field should have a valid URL format.");
         }
-        return shortenerService.getShortenedUrl(completeUrl);
+        return urlShortenerService.getShortenedUrl(completeUrl);
     }
 
     @GetMapping("unshorten/{urlId}")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Complete URL was returned"), @ApiResponse(responseCode = "404", description = "No URL matches this shortened URL")})
     public String unshortenUrl(@Parameter(description = "Id of the shortened URL (without the domain name)", example = "HgRF522k") @PathVariable String urlId) {
-        return shortenerService.getCompleteUrl(urlId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The given urlId does not match any previously shortened url."));
+        return urlShortenerService.getCompleteUrl(urlId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The given urlId does not match any previously shortened url."));
     }
 }

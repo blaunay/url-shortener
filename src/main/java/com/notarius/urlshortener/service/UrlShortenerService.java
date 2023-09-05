@@ -12,19 +12,19 @@ import java.util.Base64;
 import java.util.Optional;
 
 @Service
-public class ShortenerService {
+public class UrlShortenerService {
 
     private final UrlEntryRepository urlEntryRepository;
     private final UrlShortenerProperties urlShortenerProperties;
 
-    public ShortenerService(UrlEntryRepository urlEntryRepository, UrlShortenerProperties urlShortenerProperties) {
+    public UrlShortenerService(UrlEntryRepository urlEntryRepository, UrlShortenerProperties urlShortenerProperties) {
         this.urlEntryRepository = urlEntryRepository;
         this.urlShortenerProperties = urlShortenerProperties;
     }
 
     public String getShortenedUrl(@NonNull String completeUrl) {
         String urlId = computeShortenedUrlId(completeUrl);
-        UrlEntry urlEntry = urlEntryRepository.findById(urlId).orElse(saveNewUrlEntry(urlId, completeUrl));
+        UrlEntry urlEntry = urlEntryRepository.findById(urlId).orElseGet(() -> saveNewUrlEntry(urlId, completeUrl));
         return buildShortenedUrl(urlEntry);
     }
 
@@ -35,7 +35,7 @@ public class ShortenerService {
     private String computeShortenedUrlId(@NonNull String completeUrl) {
         byte[] md5HashedUrl = DigestUtils.md5Digest(completeUrl.trim().getBytes());
         String encodedUrl = new String(Base64.getUrlEncoder().encode(md5HashedUrl));
-        //could be problematic if two different urls give the same truncated Id
+        //could be problematic if two different url give the same Id, but should be extremely rare
         return encodedUrl.substring(0, 10);
     }
 
